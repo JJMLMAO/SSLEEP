@@ -54,17 +54,17 @@ const BottomNavBar = ({navigation}) => {
         }}
       />
       <Tab.Screen
-        name="Track"
-        component={TrackScreen}
+        name="Detect"
+        component={DetectScreen}
         options={{
-          title: 'Track',
+          title: 'Detect',
           tabBarIcon: () => (
             <Icon
-              name="track-changes"
+              name="face"
               type="material"
               size={30}
               color="#83B2E1"
-              style={styles.track_icon}
+              style={styles.diary_icon}
             />
           ),
         }}
@@ -85,18 +85,19 @@ const BottomNavBar = ({navigation}) => {
           ),
         }}
       />
+
       <Tab.Screen
-        name="Detect"
-        component={DetectScreen}
+        name="Track"
+        component={TrackScreen}
         options={{
-          title: 'Detect',
+          title: 'Track',
           tabBarIcon: () => (
             <Icon
-              name="face"
+              name="track-changes"
               type="material"
               size={30}
               color="#83B2E1"
-              style={styles.diary_icon}
+              style={styles.track_icon}
             />
           ),
         }}

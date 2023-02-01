@@ -2,11 +2,9 @@ import {StyleSheet, Text, View, Pressable} from 'react-native';
 import React, {useState} from 'react';
 import {ListItem, Icon} from '@rneui/themed';
 
-const Dropdown_hoursSlept = () => {
+const Dropdown_hoursSlept = ({hoursSlept, sethoursSlept}) => {
   const [expanded, setExpanded] = useState(false);
-  const [hoursSlept, sethoursSlept] = useState(
-    'Choose the amount of hours slept',
-  );
+
   const list_hoursSlept = [
     {value: 'less than 4 hours'},
     {value: '5 hours'},

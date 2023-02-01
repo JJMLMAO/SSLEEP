@@ -6,56 +6,62 @@ import {
   Image,
   Pressable,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import {Icon, Overlay} from '@rneui/themed';
 
-import BottomNavBar from '../../components/BottomNavBar/BottomNavBar';
 import CustomInput from '../../components/CustomInput/CustomInput';
+import {AuthContext} from '../../context/AuthContext';
 import CustomOverlay from '../../components/CustomOverlay/CustomOverlay';
+import EncryptedStorage from 'react-native-encrypted-storage';
+import PersonalisationScreen from '../PersonalisationScreen/PersonalisationScreen';
+import Moon from 'ssleep/assets/images/moon.png';
+import {text} from 'express';
+import {TouchableOpacity} from 'react-native';
 
 const HomeScreen = ({navigation}) => {
   const [visible, setVisible] = useState(false);
+  //const {login} = useContext(AuthContext);
+  const {logout} = useContext(AuthContext);
+  const [name, setName] = useState([]);
+
+  //load homescreen with useEffect
+  useEffect(() => {
+    getSName();
+  }, []);
+
+  // api call to get name
+  const getSName = async () => {
+    try {
+      let userToken = await EncryptedStorage.getItem('userToken');
+      const response = await fetch(
+        `http://10.115.91.134:5000/AppStack/getName`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            token: userToken,
+          },
+        },
+      );
+      if (response.status === 200) {
+        console.log('read successfully!');
+        const json = await response.json();
+        setName(json);
+        console.log(json);
+      }
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
 
   return (
     <ScrollView style={styles.home_root}>
-      <View style={styles.icon_container}>
-        <Pressable
-          onPress={() => alert('this one pegi setting')}
-          underlayColor="white">
-          <Icon
-            name="settings"
-            type="material"
-            size={40}
-            color="#83B2E1"
-            style={styles.setting_icon}
-          />
-        </Pressable>
-        <Pressable
-          onPress={() => alert('this one pegi notification')}
-          underlayColor="white">
-          <Icon
-            name="notifications-outline"
-            type="ionicon"
-            size={40}
-            color="#83B2E1"
-            style={styles.notification_icon}
-          />
-        </Pressable>
-        <Pressable
-          onPress={() => alert('this one pegi forum')}
-          underlayColor="white">
-          <Icon
-            name="forum"
-            type="material"
-            size={40}
-            color="#83B2E1"
-            style={styles.forum_icon}
-          />
-        </Pressable>
-      </View>
+      <View style={styles.icon_container}></View>
 
       <View style={styles.menu_icon_container}>
-        <Pressable onPress={() => setVisible(!visible)} underlayColor="white">
+        <TouchableOpacity
+          onPress={() => setVisible(!visible)}
+          underlayColor="white">
           <Icon
             name="menu"
             type="material"
@@ -77,6 +83,13 @@ const HomeScreen = ({navigation}) => {
                 </Pressable>
                 <Pressable
                   onPress={() => {
+                    navigation.navigate('DispPersonalisation');
+                    setVisible(!visible);
+                  }}>
+                  <Text style={styles.overlay_text}>Personalise</Text>
+                </Pressable>
+                <Pressable
+                  onPress={() => {
                     navigation.navigate('HelpDesk');
                     setVisible(!visible);
                   }}>
@@ -89,16 +102,34 @@ const HomeScreen = ({navigation}) => {
                   }}>
                   <Text style={styles.overlay_text}>Feedback</Text>
                 </Pressable>
-                <Pressable onPress={() => setVisible(!visible)}>
-                  <Text style={styles.overlay_cancel}>Cancel</Text>
+                <Pressable
+                  onPress={() => {
+                    logout();
+                  }}>
+                  <Text style={styles.overlay_cancel}>Logout</Text>
                 </Pressable>
               </View>
             }
           />
-        </Pressable>
+        </TouchableOpacity>
       </View>
-
-      <Text style={styles.hello_text}>Hello User</Text>
+      {name.map((sname, index) => {
+        return (
+          <View key={index}>
+            <Text style={styles.hello_text}>Hello {sname.student_name}</Text>
+            {/* <PersonalisationScreen /> */}
+          </View>
+        );
+      })}
+      <View style={{justifyContent: 'center', alignItems: 'center'}}>
+        <Image source={Moon} style={styles.moon_icon} resizeMode="contain" />
+      </View>
+      <View style={{marginVertical: 10}}>
+        <Text style={{color: 'white', fontSize: 18, textAlign: 'center'}}>
+          Feel Free to Understand Your Sleeping Health. {`\n`} & {`\n`}Explore
+          the features below!
+        </Text>
+      </View>
     </ScrollView>
   );
 };
@@ -111,7 +142,7 @@ const styles = StyleSheet.create({
   },
   hello_text: {
     color: 'white',
-    fontSize: 35,
+    fontSize: 25,
     padding: 10,
   },
   icon_container: {
@@ -147,6 +178,15 @@ const styles = StyleSheet.create({
     fontSize: 18,
     paddingVertical: 20,
     color: 'black',
+  },
+  moon_icon: {
+    height: 300,
+    marginVertical: 60,
+    shadowColor: 'black',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.8,
+    shadowRadius: 5,
+    elevation: 2,
   },
 });
 

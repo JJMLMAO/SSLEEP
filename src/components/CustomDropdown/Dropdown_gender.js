@@ -2,9 +2,9 @@ import {Pressable, StyleSheet, Text, View} from 'react-native';
 import React, {useState} from 'react';
 import {ListItem, Icon} from '@rneui/themed';
 
-const Dropdown_gender = () => {
+const Dropdown_gender = ({gender, setGender}) => {
   const [expanded, setExpanded] = useState(false);
-  const [gender, setGender] = useState('Choose your Gender');
+
   const list = [{value: 'Male'}, {value: 'Female'}];
 
   return (

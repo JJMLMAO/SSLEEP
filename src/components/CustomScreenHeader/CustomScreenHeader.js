@@ -2,7 +2,7 @@ import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import {Icon} from '@rneui/base';
 
-const CustomScreenHeader = ({header_title}) => {
+const CustomScreenHeader = ({header_title, onPress}) => {
   return (
     <View style={styles.screen_header}>
       <Icon
@@ -11,6 +11,7 @@ const CustomScreenHeader = ({header_title}) => {
         size={30}
         color="#83B2E1"
         style={styles.back_icon}
+        onPress={onPress}
       />
       <Text style={styles.headerText_style}>{header_title}</Text>
     </View>

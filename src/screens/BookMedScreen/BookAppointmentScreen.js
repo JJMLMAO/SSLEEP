@@ -4,18 +4,92 @@ import {
   View,
   ScrollView,
   TouchableOpacity,
+  Button,
 } from 'react-native';
 import React, {useState} from 'react';
 import {Icon, BottomSheet} from '@rneui/base';
-import Slider from '@react-native-community/slider';
+import DatePicker from 'react-native-date-picker';
 import CustomButton from '../../components/CustomButton/CustomButton';
 import CustomInput from '../../components/CustomInput/CustomInput';
+import CustomSlider from '../../components/CustomSlider/CustomSlider';
+import moment from 'moment';
+import EncryptedStorage from 'react-native-encrypted-storage';
 
-const BookAppointmentScreen = () => {
+const BookAppointmentScreen = ({navigation}) => {
   const [book_details, setBook_details] = useState('');
-  const [isVisible, setIsVisible] = useState(false); //bottomsheet
-  // const [value, setValue] = useState(0); // value for slider
+  const [date, setDate] = useState(new Date()); //datepicker
+  const [open, setOpen] = useState(false); //datepicker
+  const [time, setTime] = useState();
+  const [openT, setOpenT] = useState(false); //timepicker
+  const [touchAnswer, setTouchAnswer] = useState(
+    'Please choose your preferred date.',
+  );
+  const [touchAnswerT, setTouchAnswerT] = useState(
+    'Please choose your preferred time.',
+  );
 
+  const onRequestBooking = async () => {
+    try {
+      let userToken = await EncryptedStorage.getItem('userToken');
+      const body = {
+        b_date: date.toISOString().split('T')[0],
+        b_time: time.toISOString().split('T')[1].split('.')[0],
+        b_details: book_details,
+      };
+      const response = await fetch(
+        `http://10.115.91.134:5000/bookmed/reqbooking`,
+        {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            token: userToken,
+          },
+          body: JSON.stringify(body),
+        },
+      );
+      if (response === 200) {
+        console.log('booking requested!');
+      }
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
+
+  const AppDatePicker = ({onConfirm, type}) => {
+    return (
+      <>
+        <DatePicker
+          modal
+          open={open}
+          date={date}
+          mode={type}
+          minimumDate={date}
+          onConfirm={onConfirm}
+          onCancel={() => {
+            setOpen(false);
+          }}
+        />
+      </>
+    );
+  };
+
+  const AppTimePicker = ({type, onConfirmT}) => {
+    return (
+      <>
+        <DatePicker
+          modal
+          open={openT}
+          mode={type}
+          date={date}
+          onConfirm={onConfirmT}
+          onCancel={() => {
+            setOpenT(false);
+          }}
+        />
+      </>
+    );
+  };
   const CustomTouchable = ({
     touch_title,
     touch_answer,
@@ -34,72 +108,62 @@ const BookAppointmentScreen = () => {
     );
   };
 
-  const CustomSlider = ({}) => {
-    return (
-      <Slider
-        style={{width: '90%', height: 50, alignSelf: 'center'}}
-        minimumValue={0}
-        maximumValue={10}
-        minimumTrackTintColor="orange"
-        maximumTrackTintColor="blue"></Slider>
-    );
-  };
-
   return (
     <ScrollView style={styles.appointment_root}>
       <View style={styles.appointment_header}>
         <Text style={styles.appointment_title}>Book an Appointment</Text>
-        <Icon
-          name="x"
-          type="octicon"
-          size={30}
-          color="#83B2E1"
-          style={styles.cancel_icon}
-        />
+        <TouchableOpacity
+          onPress={() => {
+            navigation.goBack();
+          }}>
+          <Icon
+            name="x"
+            type="octicon"
+            size={30}
+            color="#83B2E1"
+            style={styles.cancel_icon}
+          />
+        </TouchableOpacity>
       </View>
       <CustomTouchable
         touch_title="Date"
-        touch_answer="Please choose your preferred date."
+        touch_answer={touchAnswer}
         touchcontainer_style={
           (style = {
             paddingBottom: 20,
           })
         }
+        onPress={() => {
+          setOpen(true);
+        }}
+      />
+      <AppDatePicker
+        type="date"
+        onConfirm={date => {
+          setOpen(false);
+          setDate(date);
+          setTouchAnswer(moment(date).format('DD-MM-YYYY'));
+          console.log(date.toISOString().split('T')[0]);
+        }}
       />
       <CustomTouchable
         touch_title="Time"
-        touch_answer="Please choose your preferred time."
+        touch_answer={touchAnswerT}
         touchcontainer_style={(style = {paddingBottom: 20})}
         onPress={() => {
-          setIsVisible(true);
+          setOpenT(true);
         }}
       />
-      <BottomSheet
-        isVisible={isVisible}
-        backdropStyle={{backgroundColor: 'rgba(1, 1, 24, 0.3)'}}
-        onBackdropPress={() => setIsVisible(false)}>
-        <View style={{backgroundColor: 'rgba(17, 17, 38, 0.95)'}}>
-          <Text
-            style={{
-              color: 'white',
-              textAlign: 'center',
-              textAlignVertical: 'top',
-              marginVertical: 20,
-            }}>
-            Move the slider to choose your preferred time.
-          </Text>
-          <CustomSlider />
-          <Text style={{color: 'white', textAlign: 'center'}}>Time: </Text>
-
-          <CustomButton
-            text="Confirm"
-            customStyle={{
-              marginHorizontal: 25,
-              marginVertical: 40,
-            }}
-          />
-        </View>
-      </BottomSheet>
+      <AppTimePicker
+        type="time"
+        onConfirmT={time => {
+          setOpenT(false);
+          setTime(time);
+          // console.log(time.toISOString().split('T')[1]);
+          setTouchAnswerT(moment(time).format('hh:mm A'));
+          console.log(moment(time).format('hh:mm A'));
+        }}
+      />
 
       <View style={styles.appointment_container}>
         <Text style={styles.touchable_title}>Details</Text>
@@ -130,7 +194,9 @@ const BookAppointmentScreen = () => {
           color: 'black',
         }}
         onPress={() => {
-          alert('hello');
+          onRequestBooking();
+          alert('Please wait for you appointment booking to be confirmed.');
+          navigation.goBack();
         }}
       />
     </ScrollView>

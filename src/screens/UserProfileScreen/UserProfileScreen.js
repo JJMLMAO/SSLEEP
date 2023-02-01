@@ -1,51 +1,69 @@
 import {Pressable, StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {Icon} from '@rneui/base';
 import CustomDivider from '../../components/CustomDivider/CustomDivider';
+import EncryptedStorage from 'react-native-encrypted-storage';
+import {json} from 'express';
 
 const UserProfileScreen = ({navigation}) => {
-  const CustomDisplay = ({display_title, display_data}) => {
+  const [profile_info, setProfile_info] = useState([]);
+
+  useEffect(() => {
+    getData();
+  }, []);
+
+  const getData = async () => {
+    try {
+      let userToken = await EncryptedStorage.getItem('userToken');
+      const response = await fetch(
+        `http://10.115.91.134:5000/student/getStudentData`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            token: userToken,
+          },
+        },
+      );
+      if (response.status === 200) {
+        console.log('read successfull');
+        const json = await response.json();
+        setProfile_info(json);
+      }
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
+
+  const ProfileContainer = ({profile_title, profile_data}) => {
     return (
-      <View
-        style={{marginVertical: 6, paddingVertical: 10, borderBottomWidth: 2}}>
-        <Text style={styles.profile_title}>{display_title}</Text>
-        <Text style={styles.profile_data}>{display_data}</Text>
-        <Pressable style={styles.next_icon}>
-          <Icon
-            name="arrow-forward-ios"
-            type="material"
-            size={20}
-            color="rgba(255, 255, 255, 0.7)"
-          />
-        </Pressable>
+      <View style={styles.content_container}>
+        <Text style={styles.content_title}>{profile_title}</Text>
+        <Text style={styles.content_data}>{profile_data}</Text>
       </View>
     );
   };
+
   return (
     <View style={styles.userProfile_root}>
-      <View style={styles.userProfile_innercontainer}>
-        <CustomDisplay display_title="Name" display_data="bob the builder" />
-        <CustomDisplay
-          display_title="UMS Email"
-          display_data="bi1911XXXX@student.ums.edu.my"
-        />
-        <CustomDisplay
-          display_title="Matric Number"
-          display_data="bi1911XXXX"
-        />
-        <CustomDisplay
-          display_title="Gender"
-          display_data="Prefer not to say"
-        />
-        <CustomDisplay display_title="DOB" display_data="21st October 1999" />
-        <CustomDisplay display_title="Bedtime" display_data="11:30pm" />
-        <Pressable
-          onPress={() => {
-            alert('logout liao hahaha');
-          }}>
-          <Text style={styles.profile_logout}>Logout from this account</Text>
-        </Pressable>
-      </View>
+      {profile_info.map((profile, index) => {
+        return (
+          <View key={index}>
+            <ProfileContainer
+              profile_title="Name"
+              profile_data={profile.student_name}
+            />
+            <ProfileContainer
+              profile_title="UMS Email"
+              profile_data={profile.student_email}
+            />
+            <ProfileContainer
+              profile_title="Matric Number"
+              profile_data={profile.student_matric}
+            />
+          </View>
+        );
+      })}
     </View>
   );
 };
@@ -56,33 +74,25 @@ const styles = StyleSheet.create({
     paddingHorizontal: 35,
     backgroundColor: 'rgba(1, 1, 24, 0.83)',
   },
-  userProfile_innercontainer: {
-    backgroundColor: 'rgba(255, 255, 255, 0.4)',
-    borderRadius: 8,
-    marginVertical: 60,
-    height: '85%',
-    paddingHorizontal: 15,
+  content_container: {
+    backgroundColor: 'rgba(1, 1, 24, 0.83)',
+    marginVertical: 15,
+    paddingVertical: 10,
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.6)',
   },
-  profile_title: {
-    color: 'white',
-    fontSize: 16,
+  content_title: {
+    paddingHorizontal: 8,
     paddingVertical: 5,
-    paddingHorizontal: 5,
+    fontSize: 15,
+    color: 'rgba(255, 255, 255, 1)',
   },
-  profile_data: {
-    paddingHorizontal: 5,
-    color: 'rgba(255, 255, 255, 0.6)',
-  },
-  next_icon: {
-    flexDirection: 'column',
-    position: 'absolute',
-    right: 0,
-    top: 20,
-  },
-  profile_logout: {
-    color: 'white',
-    textAlign: 'center',
-    marginVertical: 45,
+  content_data: {
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+    fontSize: 13,
+    color: 'rgba(255, 255, 255, 0.7)',
   },
 });
 

@@ -13,9 +13,7 @@ import moment from 'moment';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {DatePickerIOSComponent} from 'react-native';
 
-const DOBPicker = props => {
-  const {textStyle, defaultDate} = props;
-  const [date, setDate] = useState(moment(defaultDate));
+const DOBPicker = ({textStyle, defaultDate, date, setDate, ...rest}) => {
   const [show, setShow] = useState(false);
 
   const onChange = (e, selectedDate) => {

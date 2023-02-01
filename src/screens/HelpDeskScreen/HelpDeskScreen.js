@@ -1,33 +1,52 @@
 import {StyleSheet, Text, View, ScrollView} from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
 import Dropdown_helpdesk from '../../components/CustomDropdown/Dropdown_helpdesk';
+import EncryptedStorage from 'react-native-encrypted-storage';
+import {useEffect} from 'react';
 
 const HelpDeskScreen = () => {
-  faq_arr = [
-    {
-      title: '1',
-      question: 'How do I access my camera while using this application',
-      answer: 'just open bro lmao',
-    },
-    {title: '2', question: 'b', answer: 'catgo'},
-    {title: '3', question: 'c', answer: 'squid'},
-    {title: '4', question: 'd', answer: 'kerang'},
-    {title: '5', question: 'e', answer: 'oyster'},
-    {title: '6', question: 'f', answer: 'beef'},
-  ];
+  const [faq_title, setFaq_title] = useState('');
+  const [faq_question, setFaq_question] = useState('');
+  const [faq_answer, setFaq_answer] = useState('');
+  const [faqData, setFaqData] = useState([]);
+
+  useEffect(() => {
+    getFaqdata();
+  }, []);
+
+  // get faq data
+  const getFaqdata = async () => {
+    try {
+      const response = await fetch(`http://10.115.91.134:5000/faq/getFaqs`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      if (response.status === 200) {
+        console.log('read successful');
+        const json = await response.json();
+        setFaqData(json);
+        // console.log(json);
+      }
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
+
   return (
     <ScrollView style={styles.helpdesk_root}>
       <Text style={styles.title_desc}>
         Here are the FAQs that may help you in navigating in this application.
       </Text>
       <View style={styles.helpdesk_innercontainer}>
-        {faq_arr.map((item, index) => {
+        {faqData.map((faq, index) => {
           return (
             <Dropdown_helpdesk
               key={index}
-              faq_title={item.title}
-              faq_question={item.question}
-              faq_answer={item.answer}
+              faq_title={faq.faq_id}
+              faq_question={faq.faq_question}
+              faq_answer={faq.faq_answer}
             />
           );
         })}

@@ -2,9 +2,9 @@ import {StyleSheet, Text, View, Pressable} from 'react-native';
 import React, {useState} from 'react';
 import {ListItem, Icon} from '@rneui/themed';
 
-const Dropdown_bedtime = () => {
+const Dropdown_bedtime = ({bedTime, setBedtime}) => {
   const [expanded, setExpanded] = useState(false);
-  const [bedTime, setBedtime] = useState('Choose your usual bedtime');
+
   const list_bedtime = [
     {value: '9 - 10(pm)'},
     {value: '10 - 11(pm)'},

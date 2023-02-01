@@ -1,0 +1,2 @@
+0 sleep_deprived
+1 non_sleep_deprived

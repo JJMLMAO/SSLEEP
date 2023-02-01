@@ -1,3 +1,4 @@
+apply plugin: "kotlin-android"
 apply plugin: "com.android.application"
 
 import com.android.build.OutputFile
@@ -130,6 +131,10 @@ def reactNativeArchitectures() {
 }
 
 android {
+     aaptOptions {
+        noCompress 'tflite'
+    }
+
     ndkVersion rootProject.ext.ndkVersion
 
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -232,9 +237,9 @@ android {
     }
 
     // applicationVariants are e.g. debug, release
-    applicationVariants.all { variant ->
-        variant.outputs.each { output ->
-            // For each separate APK per architecture, set a unique version code as described here:
+    applicationVariants.all { variant ->    
+        variant.outputs.each { output ->    
+            // For each separate APK per architecture, set a unique version co  de as described here:
             // https://developer.android.com/studio/build/configure-apk-splits.html
             // Example: versionCode 1 will generate 1001 for armeabi-v7a, 1002 for x86, etc.
             def versionCodes = ["armeabi-v7a": 1, "x86": 2, "arm64-v8a": 3, "x86_64": 4]
@@ -249,6 +254,9 @@ android {
 }
 
 dependencies {
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.6.10"
+    
     implementation fileTree(dir: "libs", include: ["*.jar"])
 
     //noinspection GradleDynamicVersion
@@ -277,6 +285,8 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+    
+
 }
 
 if (isNewArchitectureEnabled()) {

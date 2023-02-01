@@ -5,9 +5,7 @@ import {ListItemTitle} from '@rneui/base/dist/ListItem/ListItem.Title';
 import {color} from '@rneui/base';
 
 const Dropdown_bookmed = ({
-  bookmed_month,
   bookmed_date,
-  bookmed_day,
   bookmed_time,
   bookmed_DOC,
   bookmed_status,
@@ -23,7 +21,7 @@ const Dropdown_bookmed = ({
           <>
             <ListItem.Content>
               <ListItem.Title style={styles.month_title}>
-                <Text style={styles.month_text}>{bookmed_month}</Text>
+                <Text style={styles.month_text}>{bookmed_date}</Text>
               </ListItem.Title>
             </ListItem.Content>
           </>
@@ -34,12 +32,6 @@ const Dropdown_bookmed = ({
         }}>
         <ListItem containerStyle={styles.dropdown_container}>
           <ListItem.Content>
-            <ListItem.Title>
-              <Text style={styles.bookmeddrop_text}>Date: {bookmed_date}</Text>
-            </ListItem.Title>
-            <ListItemTitle>
-              <Text style={styles.bookmeddrop_text}>Day: {bookmed_day}</Text>
-            </ListItemTitle>
             <ListItemTitle>
               <Text style={styles.bookmeddrop_text}>Time: {bookmed_time}</Text>
             </ListItemTitle>

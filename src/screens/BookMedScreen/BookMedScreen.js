@@ -1,15 +1,55 @@
 import {StyleSheet, Text, View, ScrollView} from 'react-native';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {Icon} from '@rneui/base';
 import CustomScreenHeader from '../../components/CustomScreenHeader/CustomScreenHeader';
 import CustomButton from '../../components/CustomButton/CustomButton';
 import Dropdown_bookmed from '../../components/CustomDropdown/Dropdown_bookmed';
 import BookAppointmentScreen from './BookAppointmentScreen';
+import moment from 'moment';
+import EncryptedStorage from 'react-native-encrypted-storage';
+import {useIsFocused} from '@react-navigation/native';
 
 const BookMedScreen = ({navigation}) => {
+  const [appointment, setAppointment] = useState([]);
+  const isFocused = useIsFocused();
+
+  useEffect(() => {
+    if (isFocused) {
+      getAppointmentData();
+    }
+  }, [isFocused]);
+
+  const getAppointmentData = async () => {
+    try {
+      let userToken = await EncryptedStorage.getItem('userToken');
+      const response = await fetch(
+        `http://10.115.91.134:5000/bookmed/getBookdata`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            token: userToken,
+          },
+        },
+      );
+      if (response.status === 200) {
+        const json = await response.json();
+        setAppointment(json);
+      }
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
   return (
     <ScrollView style={styles.bookmed_root}>
-      <CustomScreenHeader header_title="BookMed" />
+      <CustomScreenHeader
+        header_title="BookMed"
+        onPress={
+          (onPress = () => {
+            navigation.goBack();
+          })
+        }
+      />
       <View style={styles.bookmed_column1}>
         <Text style={styles.column_title}>Book Appointments with PRW</Text>
         <Text style={styles.title_desc}>
@@ -34,15 +74,20 @@ const BookMedScreen = ({navigation}) => {
         <Text style={styles.title_desc}>
           Your latest appointments will appear here sorted by month.
         </Text>
-        <Dropdown_bookmed
-          bookmed_month="October"
-          bookmed_date="09-10-2022"
-          bookmed_day="Sunday"
-          bookmed_time="3:40pm"
-          bookmed_DOC="Strange"
-          bookmed_status="CONFIRMED"
-          bookmed_details="chest pain"
-        />
+        {appointment.map((bm_appointment, index) => {
+          return (
+            <Dropdown_bookmed
+              key={index}
+              bookmed_date={moment(bm_appointment.appointment_date).format(
+                'DD-MM-YYYY',
+              )}
+              bookmed_time={bm_appointment.appointment_time}
+              bookmed_DOC="N/A"
+              bookmed_status="CONFIRMED"
+              bookmed_details={bm_appointment.appointment_details}
+            />
+          );
+        })}
       </View>
       <View style={styles.bookmed_column3}>
         <Text style={styles.column_title}>Appointment History</Text>
@@ -50,13 +95,11 @@ const BookMedScreen = ({navigation}) => {
           Your past appointments will be recorded here.
         </Text>
         <Dropdown_bookmed
-          bookmed_month="October"
-          bookmed_date="09-10-2022"
-          bookmed_day="Sunday"
-          bookmed_time="3:40pm"
-          bookmed_DOC="Strange"
-          bookmed_status="CONFIRMED"
-          bookmed_details="chest pain"
+          bookmed_date="N/A"
+          bookmed_time="N/A"
+          bookmed_status="N/A"
+          bookmed_details="N/A"
+          bookmed_DOC="N/A"
         />
       </View>
     </ScrollView>
