@@ -8,6 +8,7 @@ import BookAppointmentScreen from './BookAppointmentScreen';
 import moment from 'moment';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import {useIsFocused} from '@react-navigation/native';
+import {BASE_URL} from '../../config';
 
 const BookMedScreen = ({navigation}) => {
   const [appointment, setAppointment] = useState([]);
@@ -22,16 +23,13 @@ const BookMedScreen = ({navigation}) => {
   const getAppointmentData = async () => {
     try {
       let userToken = await EncryptedStorage.getItem('userToken');
-      const response = await fetch(
-        `http://10.115.91.134:5000/bookmed/getBookdata`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            token: userToken,
-          },
+      const response = await fetch(`${BASE_URL}/bookmed/getBookdata`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          token: userToken,
         },
-      );
+      });
       if (response.status === 200) {
         const json = await response.json();
         setAppointment(json);

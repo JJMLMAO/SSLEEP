@@ -18,6 +18,7 @@ import Dropdown_hours from '../../components/CustomBottomSheet/Dropdown_hours';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import {useEffect} from 'react';
 import {useIsFocused} from '@react-navigation/native';
+import {BASE_URL} from '../../config';
 
 const TrackScreen = ({navigation}) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -40,16 +41,13 @@ const TrackScreen = ({navigation}) => {
   const getTrackData = async () => {
     try {
       let userToken = await EncryptedStorage.getItem('userToken');
-      const response = await fetch(
-        `http://10.115.91.134:5000/track/getEntryTrack`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            token: userToken,
-          },
+      const response = await fetch(`${BASE_URL}/track/getEntryTrack`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          token: userToken,
         },
-      );
+      });
       if (response.status === 200) {
         console.log('read successful');
         const json = await response.json();
@@ -70,7 +68,7 @@ const TrackScreen = ({navigation}) => {
         hours_entry: hours,
       };
       const response = await fetch(
-        `http://10.115.91.134:5000/track/onEntryTrack`,
+        `http://192.168.0.10:5000/track/onEntryTrack`,
         {
           method: 'POST',
           headers: {

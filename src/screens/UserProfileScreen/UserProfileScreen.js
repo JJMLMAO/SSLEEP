@@ -4,6 +4,7 @@ import {Icon} from '@rneui/base';
 import CustomDivider from '../../components/CustomDivider/CustomDivider';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import {json} from 'express';
+import {BASE_URL} from '../../config';
 
 const UserProfileScreen = ({navigation}) => {
   const [profile_info, setProfile_info] = useState([]);
@@ -15,16 +16,13 @@ const UserProfileScreen = ({navigation}) => {
   const getData = async () => {
     try {
       let userToken = await EncryptedStorage.getItem('userToken');
-      const response = await fetch(
-        `http://10.115.91.134:5000/student/getStudentData`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            token: userToken,
-          },
+      const response = await fetch(`${BASE_URL}/student/getStudentData`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          token: userToken,
         },
-      );
+      });
       if (response.status === 200) {
         console.log('read successfull');
         const json = await response.json();

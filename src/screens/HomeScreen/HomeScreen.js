@@ -17,6 +17,7 @@ import PersonalisationScreen from '../PersonalisationScreen/PersonalisationScree
 import Moon from 'ssleep/assets/images/moon.png';
 import {text} from 'express';
 import {TouchableOpacity} from 'react-native';
+import {BASE_URL} from '../../config';
 
 const HomeScreen = ({navigation}) => {
   const [visible, setVisible] = useState(false);
@@ -33,16 +34,13 @@ const HomeScreen = ({navigation}) => {
   const getSName = async () => {
     try {
       let userToken = await EncryptedStorage.getItem('userToken');
-      const response = await fetch(
-        `http://10.115.91.134:5000/AppStack/getName`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            token: userToken,
-          },
+      const response = await fetch(`${BASE_URL}/AppStack/getName`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          token: userToken,
         },
-      );
+      });
       if (response.status === 200) {
         console.log('read successfully!');
         const json = await response.json();

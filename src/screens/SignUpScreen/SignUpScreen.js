@@ -19,23 +19,26 @@ const SignUpScreen = ({navigation}) => {
 
   const onSignUp = async () => {
     try {
+      console.log('runnign this funcrtion');
       const body = {
         student_email: emailAdd,
         student_password: password,
         student_matric: matricNo,
         student_name: Name,
       };
-      const response = await fetch(`http://10.115.91.134:5000/auth/signups`, {
+      const response = await fetch(`${BASE_URL}/auth/signups`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(body),
       });
       if (response.status === 200) {
+        console.log('if response 200');
         await response.json();
         console.log('User has been successfully registered !');
         Alert.alert('Your account is registered, please proceed to login.');
         navigation.navigate('Login');
       } else {
+        console.log('if !response 200');
         const errmessage = await response.text();
         console.log('Wrong credentials!');
         alert(errmessage);

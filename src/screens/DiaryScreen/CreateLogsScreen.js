@@ -32,18 +32,15 @@ const CreateLogsScreen = ({navigation}) => {
         ),
         d_description: logContent,
       };
-      const response = await fetch(
-        `http://10.115.91.134:5000/diary/submitdiary`,
-        {
-          method: 'POST',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            token: userToken,
-          },
-          body: JSON.stringify(body),
+      const response = await fetch(`${BASE_URL}/diary/submitdiary`, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          token: userToken,
         },
-      );
+        body: JSON.stringify(body),
+      });
       if (response.status === 200) {
         console.log('success !');
       }

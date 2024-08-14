@@ -29,7 +29,7 @@ const LoginScreen = ({navigation}) => {
         student_password: password,
       };
 
-      const response = await fetch(`http://10.115.91.134:5000/auth/logins`, {
+      const response = await fetch(`${BASE_URL}/auth/logins`, {
         method: 'POST',
         headers: {
           Accept: 'application/json',

@@ -12,6 +12,7 @@ import CustomScreenHeader from '../../components/CustomScreenHeader/CustomScreen
 import CustomOverlay from '../../components/CustomOverlay/CustomOverlay';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import {useIsFocused} from '@react-navigation/native';
+import {BASE_URL} from '../../config';
 
 const DiaryScreen = ({navigation}) => {
   const [visible, setVisible] = useState(false); // Custom Overlay
@@ -36,7 +37,7 @@ const DiaryScreen = ({navigation}) => {
   const getDiaryMonth = async () => {
     try {
       let userToken = await EncryptedStorage.getItem('userToken');
-      const response = await fetch(`http://10.115.91.134:5000/diary/getMonth`, {
+      const response = await fetch(`${BASE_URL}/diary/getMonth`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -56,7 +57,7 @@ const DiaryScreen = ({navigation}) => {
   const getDiaryDate = async () => {
     try {
       let userToken = await EncryptedStorage.getItem('userToken');
-      const response = await fetch(`http://10.115.91.134:5000/diary/getDate`, {
+      const response = await fetch(`http://192.168.0.10:5000/diary/getDate`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -77,7 +78,7 @@ const DiaryScreen = ({navigation}) => {
     try {
       let userToken = await EncryptedStorage.getItem('userToken');
       const response = await fetch(
-        `http://10.115.91.134:5000/diary/getDescription`,
+        `http://192.168.0.10:5000/diary/getDescription`,
         {
           method: 'GET',
           headers: {

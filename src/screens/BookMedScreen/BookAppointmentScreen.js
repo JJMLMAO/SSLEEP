@@ -14,6 +14,7 @@ import CustomInput from '../../components/CustomInput/CustomInput';
 import CustomSlider from '../../components/CustomSlider/CustomSlider';
 import moment from 'moment';
 import EncryptedStorage from 'react-native-encrypted-storage';
+import {BASE_URL} from '../../config';
 
 const BookAppointmentScreen = ({navigation}) => {
   const [book_details, setBook_details] = useState('');
@@ -36,18 +37,15 @@ const BookAppointmentScreen = ({navigation}) => {
         b_time: time.toISOString().split('T')[1].split('.')[0],
         b_details: book_details,
       };
-      const response = await fetch(
-        `http://10.115.91.134:5000/bookmed/reqbooking`,
-        {
-          method: 'POST',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            token: userToken,
-          },
-          body: JSON.stringify(body),
+      const response = await fetch(`${BASE_URL}/bookmed/reqbooking`, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          token: userToken,
         },
-      );
+        body: JSON.stringify(body),
+      });
       if (response === 200) {
         console.log('booking requested!');
       }

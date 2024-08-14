@@ -12,6 +12,7 @@ import CustomInput from '../../components/CustomInput/CustomInput';
 import CustomOverlay from '../../components/CustomOverlay/CustomOverlay';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import {useIsFocused} from '@react-navigation/native';
+import {BASE_URL} from '../../config';
 
 const FeedbackScreen = () => {
   const [feedback, setFeedback] = useState('');
@@ -31,16 +32,13 @@ const FeedbackScreen = () => {
     try {
       let userToken = await EncryptedStorage.getItem('userToken');
 
-      const response = await fetch(
-        `http://10.115.91.134:5000/feedback/getfeedbacks`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            token: userToken,
-          },
+      const response = await fetch(`${BASE_URL}/feedback/getfeedbacks`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          token: userToken,
         },
-      );
+      });
       if (response.status === 200) {
         const json = await response.json();
         //console.log(json);
@@ -63,7 +61,7 @@ const FeedbackScreen = () => {
         fb_desc: feedback,
       };
       const response = await fetch(
-        `http://10.115.91.134:5000/feedback/submitfeedbacks`,
+        `http://192.168.0.10:5000/feedback/submitfeedbacks`,
         {
           method: 'POST',
           headers: {

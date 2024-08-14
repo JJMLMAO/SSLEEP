@@ -7,6 +7,7 @@ import Dropdown_bedtime from '../../components/CustomDropdown/Dropdown_bedtime';
 import Dropdown_hoursSlept from '../../components/CustomDropdown/Dropdown_hoursSlept';
 import DOBPicker from '../../components/CustomDatePicker/DOBPicker';
 import EncryptedStorage from 'react-native-encrypted-storage';
+import {BASE_URL} from '../../config';
 
 const PersonalisationScreen = ({navigation}) => {
   const [gender, setGender] = useState('Choose your Gender'); //gender
@@ -27,7 +28,7 @@ const PersonalisationScreen = ({navigation}) => {
       };
       //console.log(typeof date);
       const response = await fetch(
-        `http://10.115.91.134:5000/personalisation/personalisations`,
+        `${BASE_URL}/personalisation/personalisations`,
         {
           method: 'POST',
           headers: {

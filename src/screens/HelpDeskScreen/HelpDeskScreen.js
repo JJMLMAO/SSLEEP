@@ -3,6 +3,7 @@ import React, {useState} from 'react';
 import Dropdown_helpdesk from '../../components/CustomDropdown/Dropdown_helpdesk';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import {useEffect} from 'react';
+import {BASE_URL} from '../../config';
 
 const HelpDeskScreen = () => {
   const [faq_title, setFaq_title] = useState('');
@@ -17,7 +18,7 @@ const HelpDeskScreen = () => {
   // get faq data
   const getFaqdata = async () => {
     try {
-      const response = await fetch(`http://10.115.91.134:5000/faq/getFaqs`, {
+      const response = await fetch(`${BASE_URL}/faq/getFaqs`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

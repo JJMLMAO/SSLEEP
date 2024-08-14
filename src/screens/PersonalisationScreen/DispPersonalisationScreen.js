@@ -4,6 +4,7 @@ import {Pressable} from 'react-native';
 import {useEffect} from 'react';
 import CustomButton from '../../components/CustomButton/CustomButton';
 import EncryptedStorage from 'react-native-encrypted-storage';
+import {BASE_URL} from '../../config';
 
 const DispPersonalisationScreen = ({navigation}) => {
   const [gender, setGender] = useState('User gender'); // gender
@@ -20,7 +21,7 @@ const DispPersonalisationScreen = ({navigation}) => {
       let userToken = await EncryptedStorage.getItem('userToken');
 
       const response = await fetch(
-        `http://10.115.91.134:5000/personalisation/getpersonalisationdata`,
+        `${BASE_URL}/personalisation/getpersonalisationdata`,
         {
           method: 'GET',
           headers: {
